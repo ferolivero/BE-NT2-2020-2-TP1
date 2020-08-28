@@ -9,7 +9,7 @@ const classNames = {
 const list = document.getElementById('todo-list')
 const itemCountSpan = document.getElementById('item-count')
 const uncheckedCountSpan = document.getElementById('unchecked-count')
-const tareasList = [];
+let tareasList = [];
 class Todo {
   constructor(titulo){
     this.titulo = titulo
@@ -29,6 +29,12 @@ class Todo {
     // Renderizo nuevamente los contadores
     renderContadores();
   }
+
+  // Hay manera de invocar directamente a la funcion de eliminar desde la accion de onclick???
+  removeAction(){
+    // Elimino el todo seleccionado
+    removeTodo(this);
+  }
 }
 
 function addTodo() {
@@ -42,6 +48,14 @@ function addTodo() {
   render()
 }
 
+function removeTodo(todo) {
+  // Remuevo de la lista la tarea correspondiente
+  tareasList = tareasList.filter(x => x !== todo);
+
+  // Renderizo la aplicacion sin el todo eliminado
+  render();
+}
+
 function renderTarea(todo){
   // Si ya tiene elemento no se vuelve a crear.
   if (todo.element) return todo.element;
@@ -51,6 +65,13 @@ function renderTarea(todo){
   newCheckbox.className = classNames.TODO_CHECKBOX;
   newCheckbox.type = 'checkbox';
   newCheckbox.onchange = todo.toogleCheckbox.bind(todo)
+
+  // Creo el nuevo elemento button
+  const newButton = document.createElement('button');
+  newButton.className = classNames.TODO_DELETE;
+  newButton.type = 'button';
+  newButton.innerText = 'Eliminar';
+  newButton.onclick = todo.removeAction.bind(todo)
   
   // Creo el nuevo elemento SPAN
   const newSpan = document.createElement('span');
@@ -62,6 +83,7 @@ function renderTarea(todo){
   newItem.className = classNames.TODO_ITEM;
   newItem.appendChild(newCheckbox)
   newItem.appendChild(newSpan);
+  newItem.appendChild(newButton);
 
   // Referencio el nuevo LI y CHECKBOX al elemento dentro del objeto
   todo.element = newItem;
